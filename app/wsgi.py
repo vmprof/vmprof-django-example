@@ -2,6 +2,7 @@ import os
 
 import vmprof
 import tempfile
+import urlparse
 
 from django.core.wsgi import get_wsgi_application
 from django.http import HttpResponse
@@ -50,21 +51,19 @@ class Middleware(object):
                 stats_log.append(
                     "%s %s %s:%d" % (v.ljust(7), func_name.ljust(max_len + 1), filename, lineno))
             else:
-                stats_log.append("%s %s" % (v.ljust(7), k.ljust(max_len + 1)))
+                if not exclude:
+                    stats_log.append("%s %s" % (v.ljust(7), k.ljust(max_len + 1)))
 
         return "\n".join(stats_log)
 
     def __call__(self, environ, start_response):
         prof_file = tempfile.NamedTemporaryFile()
 
-        vmprof.enable(prof_file.fileno(), 0.0005)
-
+        vmprof.enable(prof_file.fileno())
         self.application(environ, start_response)
-
         vmprof.disable()
 
         stats = vmprof.read_profile(prof_file.name)
-
         stats_log = self.stats(stats, getattr(settings, 'VMPROF_EXCLUDE', None))
 
         return HttpResponse("<pre>VMprof \n\n===========\n%s</pre>" % stats_log)
