@@ -13,7 +13,7 @@ def cpu_2():
 
 def io_1():
     conn = httplib.HTTPConnection("httpbin.org")
-    conn.request("GET", "/delay/3")
+    conn.request("GET", "/delay/1")
     return conn.getresponse()
 
 
