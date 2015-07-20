@@ -59,7 +59,7 @@ class Middleware(object):
         vmprof.disable()
 
         stats = vmprof.read_profile(prof_file.name)
-        stats_log = vmprof.cli.show2(stats)
+        stats_log = self.stats(stats)
 
         return HttpResponse("<pre>VMprof \n\n===========\n%s</pre>" % stats_log)
 
