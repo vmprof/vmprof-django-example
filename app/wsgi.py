@@ -59,7 +59,7 @@ class Middleware(object):
     def __call__(self, environ, start_response):
         prof_file = tempfile.NamedTemporaryFile()
 
-        vmprof.enable(prof_file.fileno())
+        vmprof.enable(prof_file.fileno(), 0.0005)
         self.application(environ, start_response)
         vmprof.disable()
 
