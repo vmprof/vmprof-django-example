@@ -76,6 +76,6 @@ STATIC_URL = '/static/'
 
 
 VMPROF_EXCLUDE = [
-    "/vmprof/vmprof-test/.env/",
-    "/usr/lib/python2.7/"
+    "/usr/lib/python2.7/",
+    os.environ['VIRTUAL_ENV'],
 ]
