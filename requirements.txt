@@ -1,3 +1,3 @@
 Django==1.8.3
 pdbpp==0.8.2
--e git+git@github.com:vmprof/vmprof-python.git@10451b506757babff757111f16255de147e668ab#egg=vmprof-master
+
