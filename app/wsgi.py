@@ -2,7 +2,6 @@ import os
 
 import vmprof
 import tempfile
-import urlparse
 
 from django.core.wsgi import get_wsgi_application
 from django.http import HttpResponse
