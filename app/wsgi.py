@@ -5,6 +5,7 @@ import tempfile
 
 from django.core.wsgi import get_wsgi_application
 from django.http import HttpResponse
+from django.conf import settings
 
 
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "app.settings")
@@ -21,7 +22,7 @@ class Middleware(object):
         else:
             return len(e)
 
-    def stats(self, stats):
+    def stats(self, stats, exclude=None):
         p = stats.top_profile()
         if not p:
             return "no stats"
@@ -41,6 +42,10 @@ class Middleware(object):
                 v = '<0.1%'
             if k.startswith('py:'):
                 _, func_name, lineno, filename = k.split(":", 3)
+
+                if any([filename.startswith(ex) for ex in exclude or []]):
+                    continue
+
                 lineno = int(lineno)
                 stats_log.append(
                     "%s %s %s:%d" % (v.ljust(7), func_name.ljust(max_len + 1), filename, lineno))
@@ -52,14 +57,15 @@ class Middleware(object):
     def __call__(self, environ, start_response):
         prof_file = tempfile.NamedTemporaryFile()
 
-        vmprof.enable(prof_file.fileno())
+        vmprof.enable(prof_file.fileno(), 0.0005)
 
         self.application(environ, start_response)
 
         vmprof.disable()
 
         stats = vmprof.read_profile(prof_file.name)
-        stats_log = self.stats(stats)
+
+        stats_log = self.stats(stats, getattr(settings, 'VMPROF_EXCLUDE', None))
 
         return HttpResponse("<pre>VMprof \n\n===========\n%s</pre>" % stats_log)
 
