@@ -1,3 +1,5 @@
+This repo is archived. Please see https://github.com/vmprof/vmprof-server for a more complete example.
+
 # VMprof django example
 
 
